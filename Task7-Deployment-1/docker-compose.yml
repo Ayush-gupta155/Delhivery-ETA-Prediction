@@ -4,16 +4,44 @@ services:
   app:
     build: .
     command: uvicorn api_app:app --host 0.0.0.0 --port 8000
-    ports: ["8000:8000"]
+    ports:
+      - "8000:8000"
+    networks:
+      - monitoring
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
   prometheus:
     image: prom/prometheus
     volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml"]
-    ports: ["9090:9090"]
+    ports: 
+      - "9090:9090"
+    networks:
+      - monitoring
 
   grafana:
     image: grafana/grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-    ports: ["3000:3000"]
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
+    ports: 
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+
+networks:
+  monitoring:
+
+volumes:
+  grafana-storage:

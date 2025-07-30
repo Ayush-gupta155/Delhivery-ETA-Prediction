@@ -105,6 +105,9 @@ Task7-Deployment/
 - Update `inference_pipeline.py` if the model or feature engineering changes
 - Use `test_api.py` to validate any changes before deployment
 
+### Contact
+For questions or integration help, contact Laavanjan (main developer).
+
 ---
 
 **Ready for integration and handoff to other team members (containerization, monitoring, deployment, etc.)**

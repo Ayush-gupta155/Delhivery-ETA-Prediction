@@ -81,6 +81,9 @@ async def log_requests(request: Request, call_next):
 def metrics():
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 class DeliveryInput(BaseModel):
     """Input model for delivery time prediction"""
